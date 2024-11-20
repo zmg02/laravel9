@@ -1,0 +1,167 @@
+services:
+    nginx:
+        image: 'nginx:latest'
+        ports:
+            - '80:80'
+        privileged: true
+        volumes:
+            - '/www/nginx/nginx.conf:/etc/nginx/nginx.conf'
+        depends_on:
+            - web1
+            - web2
+        networks:
+            - mgnet
+    web1:
+        image: 'laravel:9.0.0'
+        networks:
+            - mgnet
+        privileged: true
+        volumes:
+            - '/www/wwwroot/laravel902:/www/wwwroot/laravel9'
+        environment:
+            - APP_ENV=local
+            - 'APP_KEY=base64:XXXXXXXXXXXXXXXXXXXXXXXXXX'
+            - DB_HOST=mysql-master
+            - REDIS_HOST=redis-1
+        depends_on:
+            - mysql-master
+            - redis-1
+    web2:
+        image: 'laravel:9.0.0'
+        networks:
+            - mgnet
+        privileged: true
+        volumes:
+            - '/www/wwwroot/laravel902:/www/wwwroot/laravel9'
+        environment:
+            - APP_ENV=local
+            - 'APP_KEY=base64:XXXXXXXXXXXXXXXXXXXXXXXXXX'
+            - DB_HOST=mysql-master
+            - REDIS_HOST=redis-1
+        depends_on:
+            - mysql-master
+            - redis-1
+    mysql-master:
+        image: 'mysql:8.0'
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: laravel
+        networks:
+            - mgnet
+        ports:
+            - '3307:3306'
+        privileged: true
+        volumes:
+            - '/mydata/mysql-master/log:/var/log/mysql'
+            - '/mydata/mysql-master/data:/var/lib/mysql'
+            - '/mydata/mysql-master/my.cnf:/etc/my.cnf'
+    mysql-slave:
+        image: 'mysql:8.0'
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: laravel
+        networks:
+            - mgnet
+        depends_on:
+            - mysql-master
+        ports:
+            - '3308:3306'
+        privileged: true
+        volumes:
+            - '/mydata/mysql-slave/log:/var/log/mysql'
+            - '/mydata/mysql-slave/data:/var/lib/mysql'
+            - '/mydata/mysql-slave/my.cnf:/etc/my.cnf'
+    redis-1:
+        image: 'redis:7.0'
+        networks:
+            - mgnet
+        privileged: true
+        volumes:
+            - '/mydata/redis-cluster/share/redis-1:/data'
+        ports:
+            - '6381:6379'
+        command:
+            - redis-server
+            - '--cluster-enabled'
+            - 'yes'
+            - '--appendonly'
+            - 'yes'
+    redis-2:
+        image: 'redis:7.0'
+        networks:
+            - mgnet
+        privileged: true
+        volumes:
+            - '/mydata/redis-cluster/share/redis-2:/data'
+        ports:
+            - '6382:6379'
+        command:
+            - redis-server
+            - '--cluster-enabled'
+            - 'yes'
+            - '--appendonly'
+            - 'yes'
+    redis-3:
+        image: 'redis:7.0'
+        networks:
+            - mgnet
+        privileged: true
+        volumes:
+            - '/mydata/redis-cluster/share/redis-3:/data'
+        ports:
+            - '6383:6379'
+        command:
+            - redis-server
+            - '--cluster-enabled'
+            - 'yes'
+            - '--appendonly'
+            - 'yes'
+    redis-4:
+        image: 'redis:7.0'
+        networks:
+            - mgnet
+        privileged: true
+        volumes:
+            - '/mydata/redis-cluster/share/redis-4:/data'
+        ports:
+            - '6384:6379'
+        command:
+            - redis-server
+            - '--cluster-enabled'
+            - 'yes'
+            - '--appendonly'
+            - 'yes'
+    redis-5:
+        image: 'redis:7.0'
+        networks:
+            - mgnet
+        privileged: true
+        volumes:
+            - '/mydata/redis-cluster/share/redis-5:/data'
+        ports:
+            - '6385:6379'
+        command:
+            - redis-server
+            - '--cluster-enabled'
+            - 'yes'
+            - '--appendonly'
+            - 'yes'
+    redis-6:
+        image: 'redis:7.0'
+        networks:
+            - mgnet
+        privileged: true
+        volumes:
+            - '/mydata/redis-cluster/share/redis-6:/data'
+        ports:
+            - '6386:6379'
+        command:
+            - redis-server
+            - '--cluster-enabled'
+            - 'yes'
+            - '--appendonly'
+            - 'yes'
+
+networks:
+    mgnet:
+        driver: bridge
